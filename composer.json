@@ -9,14 +9,13 @@
       "email": "jianyong.me@gmail.com"
     }
   ],
-  "require": {},
   "autoload": {
     "psr-4": {
       "Rush\\": "vendor/phprush/requests/src"
     }
   },
+  "minimum-stability": "stable",
   "require": {
         "php": ">=5.3.3"
-  },
-  "minimum-stability": "stable"
+  }
 }
