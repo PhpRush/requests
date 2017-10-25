@@ -1,0 +1,13 @@
+{
+    "name": "rush/requests",
+    "description": "requests lib",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "JianYong",
+            "email": "jianyong.me@gmail.com"
+        }
+    ],
+    "require": {}
+}
