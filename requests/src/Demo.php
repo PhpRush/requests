@@ -6,7 +6,7 @@
  * Time: 18:28
  */
 
-namespace Rush\Src;
+namespace Rush;
 
 
 class Demo

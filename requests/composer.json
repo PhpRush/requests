@@ -1,13 +1,18 @@
 {
-    "name": "rush/requests",
-    "description": "requests lib",
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "JianYong",
-            "email": "jianyong.me@gmail.com"
-        }
-    ],
-    "require": {}
+  "name": "rush/requests",
+  "description": "requests lib",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "JianYong",
+      "email": "jianyong.me@gmail.com"
+    }
+  ],
+  "require": {},
+  "autoload": {
+    "psr-4": {
+      "Rush\\": "vendor/rush/requests/src"
+    }
+  }
 }
