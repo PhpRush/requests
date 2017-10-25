@@ -6,7 +6,7 @@
  * Time: 18:28
  */
 
-namespace Rush;
+namespace PhpRush\Requests;
 
 
 class Demo
