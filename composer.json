@@ -1,5 +1,5 @@
 {
-  "name": "rush/requests",
+  "name": "PhpRush/requests",
   "description": "requests lib",
   "type": "library",
   "license": "MIT",
@@ -12,7 +12,7 @@
   "require": {},
   "autoload": {
     "psr-4": {
-      "Rush\\": "vendor/rush/requests/src"
+      "Rush\\": "vendor/PhpRush/requests/src"
     }
   }
 }
