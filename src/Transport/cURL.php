@@ -1,4 +1,5 @@
 <?php
+
 namespace PhpRush\Requests\Transport;
 
 use PhpRush\Requests\Transport;
@@ -125,18 +126,18 @@ class cURL implements Transport
     public function request($url, $headers = array(), $data = array(), $options = array())
     {
         $this->setupHandle($url, $headers, $data, $options);
-        
+
         $this->response = curl_exec($this->handle);
-        
+
         if (curl_errno($this->handle) === 23 || curl_errno($this->handle) === 61) {
             curl_setopt($this->handle, CURLOPT_ENCODING, 'none');
             $this->response = curl_exec($this->handle);
         }
-        
+
         if (curl_errno($this->handle)) {
             $errno = curl_errno($this->handle);
             $error = sprintf('cURL error %s: %s', $errno, curl_error($this->handle));
-            
+
             if ($errno == 28) {
                 throw new TimeoutException($error, $errno);
             } else {
@@ -144,14 +145,14 @@ class cURL implements Transport
             }
         }
         $this->info = curl_getinfo($this->handle);
-        
+
         curl_setopt($this->handle, CURLOPT_HEADERFUNCTION, null);
         curl_setopt($this->handle, CURLOPT_WRITEFUNCTION, null);
     }
 
-    public function getInfo($key = NULL)
+    public function getInfo($key = null)
     {
-        if (! is_null($key)) {
+        if (!is_null($key)) {
             return isset($this->info[$key]) ? $this->info[$key] : null;
         }
         return $this->info;
@@ -165,24 +166,24 @@ class cURL implements Transport
     public function getHeaders()
     {
         if (is_null($this->headers)) {
-            $header = substr($response, 0, $this->info['header_size']);
-            $this->headers = $headers;
+            $header = substr($this->response, 0, $this->info['header_size']);
+            $this->headers = $header;
         }
-        
+
         return $this->headers;
     }
 
     private function setupHandle($url, $headers, $data, $options)
     {
         // Force closing the connection for old versions of cURL (<7.22).
-        if (! isset($headers['Connection'])) {
+        if (!isset($headers['Connection'])) {
             $headers['Connection'] = 'close';
         }
-        
-        if (! empty($data) && ! is_string($data)) {
+
+        if (!empty($data) && !is_string($data)) {
             $data = http_build_query($data, null, '&');
         }
-        
+
         switch ($options['method']) {
             case Http::METHOD_POST:
                 curl_setopt($this->handle, CURLOPT_POST, true);
@@ -190,44 +191,47 @@ class cURL implements Transport
                 break;
             default:
                 curl_setopt($this->handle, CURLOPT_CUSTOMREQUEST, $options['method']);
-                if (! empty($data)) {
+                if (!empty($data)) {
                     curl_setopt($this->handle, CURLOPT_POSTFIELDS, $data);
                 }
         }
-        
-        $timeout = max($options['timeout'], 1);
+
+        $timeout = isset($options['timeout']) ? $options['timeout'] : 1;
+        $timeout = max($timeout, 1);
         if (is_int($timeout) || $this->version < self::CURL_7_16_2) {
             curl_setopt($this->handle, CURLOPT_TIMEOUT, ceil($timeout));
         } else {
             curl_setopt($this->handle, CURLOPT_TIMEOUT_MS, round($timeout * 1000));
         }
-        
-        if (is_int($options['connect_timeout']) || $this->version < self::CURL_7_16_2) {
-            curl_setopt($this->handle, CURLOPT_CONNECTTIMEOUT, ceil($options['connect_timeout']));
-        } else {
-            curl_setopt($this->handle, CURLOPT_CONNECTTIMEOUT_MS, round($options['connect_timeout'] * 1000));
+
+        if (isset($options['connect_timeout'])) {
+            if (is_int($options['connect_timeout']) || $this->version < self::CURL_7_16_2) {
+                curl_setopt($this->handle, CURLOPT_CONNECTTIMEOUT, ceil($options['connect_timeout']));
+            } else {
+                curl_setopt($this->handle, CURLOPT_CONNECTTIMEOUT_MS, round($options['connect_timeout'] * 1000));
+            }
         }
-        
+
         curl_setopt($this->handle, CURLOPT_URL, $url);
-        
-        if (! empty($options['referer'])) {
+
+        if (isset($options['referer']) && !empty($options['referer'])) {
             curl_setopt($this->handle, CURLOPT_REFERER, $options['referer']);
         }
-        
-        if (! empty($options['useragent'])) {
+
+        if (isset($options['useragent']) && !empty($options['useragent'])) {
             curl_setopt($this->handle, CURLOPT_USERAGENT, $options['useragent']);
         }
-        
-        if (! empty($headers)) {
+
+        if (!empty($headers)) {
             curl_setopt($this->handle, CURLOPT_HTTPHEADER, $headers);
         }
-        
-        if ($options['protocol_version'] === 1.1) {
+
+        if (isset($options['protocol_version']) && $options['protocol_version'] === 1.1) {
             curl_setopt($this->handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         } else {
             curl_setopt($this->handle, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_0);
         }
-        
+
         if (isset($options['verify'])) {
             if ($options['verify'] === false) {
                 curl_setopt($this->handle, CURLOPT_SSL_VERIFYHOST, 0);
@@ -236,7 +240,7 @@ class cURL implements Transport
                 curl_setopt($this->handle, CURLOPT_CAINFO, $options['verify']);
             }
         }
-        
+
         if (isset($options['verifyname']) && $options['verifyname'] === false) {
             curl_setopt($this->handle, CURLOPT_SSL_VERIFYHOST, 0);
         }
