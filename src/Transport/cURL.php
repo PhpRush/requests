@@ -186,7 +186,7 @@ class cURL implements Transport
         switch ($options['method']) {
             case Http::METHOD_POST:
                 curl_setopt($this->handle, CURLOPT_POST, true);
-                curl_setopt($this->handle, CURLOPT_POSTFIELDSRequests, $data);
+                curl_setopt($this->handle, CURLOPT_POSTFIELDS, $data);
                 break;
             default:
                 curl_setopt($this->handle, CURLOPT_CUSTOMREQUEST, $options['method']);
